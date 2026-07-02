@@ -7,6 +7,8 @@ COPY . .
 RUN chmod +x gradlew
 RUN ./gradlew clean installDist --no-daemon
 
+RUN ls -R build
+
 FROM eclipse-temurin:21-jre
 
 WORKDIR /app
