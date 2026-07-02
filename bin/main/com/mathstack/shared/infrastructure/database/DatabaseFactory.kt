@@ -21,10 +21,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
     fun init(config: ApplicationConfig) {
-        // Conexión a la base de datos usando HikariCP
         Database.connect(hikari(config))
         
-        // ¡Magia! Esto crea todas las tablas automáticamente si no existen
         transaction {
             SchemaUtils.createMissingTablesAndColumns(
                 UserTable,
@@ -46,9 +44,26 @@ object DatabaseFactory {
 
     private fun hikari(config: ApplicationConfig): HikariDataSource {
         return HikariDataSource().apply {
-            jdbcUrl = com.mathstack.shared.infrastructure.config.Env.get("DB_URL") ?: config.propertyOrNull("database.url")?.getString() ?: "jdbc:postgresql://localhost:5432/mathstack"
-            username = com.mathstack.shared.infrastructure.config.Env.get("DB_USER") ?: config.propertyOrNull("database.user")?.getString() ?: "postgres"
-            password = com.mathstack.shared.infrastructure.config.Env.get("DB_PASSWORD") ?: config.propertyOrNull("database.password")?.getString() ?: "postgres"
+            var rawUrl = com.mathstack.shared.infrastructure.config.Env.get("DB_URL") ?: config.propertyOrNull("database.url")?.getString() ?: "jdbc:postgresql://localhost:5432/mathstack"
+            
+            var userFromUrl: String? = null
+            var passFromUrl: String? = null
+            
+            if (rawUrl.startsWith("postgres://") || rawUrl.startsWith("postgresql://")) {
+                val uri = java.net.URI(rawUrl)
+                if (uri.userInfo != null) {
+                    val split = uri.userInfo.split(":")
+                    userFromUrl = split[0]
+                    passFromUrl = if (split.size > 1) split[1] else null
+                }
+                rawUrl = "jdbc:postgresql://${uri.host}:${uri.port}${uri.path}"
+            } else if (!rawUrl.startsWith("jdbc:")) {
+                rawUrl = "jdbc:$rawUrl"
+            }
+            
+            jdbcUrl = rawUrl
+            username = userFromUrl ?: com.mathstack.shared.infrastructure.config.Env.get("DB_USER") ?: config.propertyOrNull("database.user")?.getString() ?: "postgres"
+            password = passFromUrl ?: com.mathstack.shared.infrastructure.config.Env.get("DB_PASSWORD") ?: config.propertyOrNull("database.password")?.getString() ?: "postgres"
             driverClassName = com.mathstack.shared.infrastructure.config.Env.get("DB_DRIVER") ?: config.propertyOrNull("database.driver")?.getString() ?: "org.postgresql.Driver"
             
             maximumPoolSize = 10
