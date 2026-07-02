@@ -13,9 +13,7 @@ val postgresqlVersion = "42.7.7"
 val jbcryptVersion = "0.4"
 
 group = "com.mathstack"
-version = "0.1.0"
-
-layout.buildDirectory.set(File(System.getProperty("java.io.tmpdir"), "integrador5to_build"))
+version = "1.0.0"
 
 application {
     mainClass.set("io.ktor.server.netty.EngineMain")
@@ -43,8 +41,9 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.postgresql:postgresql:$postgresqlVersion")
-    implementation("org.mindrot:jbcrypt:$jbcryptVersion")
+
     implementation("com.zaxxer:HikariCP:5.1.0")
+    implementation("org.mindrot:jbcrypt:$jbcryptVersion")
     implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
 
     implementation("io.insert-koin:koin-ktor:$koinVersion")
