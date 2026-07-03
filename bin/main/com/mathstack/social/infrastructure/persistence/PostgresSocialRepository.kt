@@ -65,6 +65,10 @@ class PostgresSocialRepository : SocialRepository {
         ChallengesTable.selectAll().where { ChallengesTable.id eq id }.singleOrNull()?.toChallenge()
     }
 
+    override fun listAllChallenges(): List<Challenge> = transaction {
+        ChallengesTable.selectAll().map { it.toChallenge() }
+    }
+
     override fun updateChallenge(challenge: Challenge): Challenge = transaction {
         ChallengesTable.update({ ChallengesTable.id eq challenge.id }) {
             it[status] = challenge.status

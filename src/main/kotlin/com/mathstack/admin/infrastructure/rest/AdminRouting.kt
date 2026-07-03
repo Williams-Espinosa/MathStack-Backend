@@ -33,6 +33,9 @@ fun Route.adminRouting() {
     val listAllDiagnosticsUseCase by inject<com.mathstack.admin.application.ListAllDiagnosticsUseCase>()
     val listAllPracticeSessionsUseCase by inject<com.mathstack.admin.application.ListAllPracticeSessionsUseCase>()
     val getDashboardStatsUseCase by inject<com.mathstack.admin.application.GetDashboardStatsUseCase>()
+    val listAllLessonsUseCase by inject<com.mathstack.admin.application.ListAllLessonsUseCase>()
+    val listAllExercisesUseCase by inject<com.mathstack.admin.application.ListAllExercisesUseCase>()
+    val listAllChallengesUseCase by inject<com.mathstack.admin.application.ListAllChallengesUseCase>()
 
     authenticate("auth-jwt") {
         authorize("ADMIN") {
@@ -42,15 +45,15 @@ fun Route.adminRouting() {
                 }
                 
                 get("/lessons") {
-                    call.respond(emptyList<Any>())
+                    call.respond(listAllLessonsUseCase())
                 }
 
                 get("/exercises") {
-                    call.respond(emptyList<Any>())
+                    call.respond(listAllExercisesUseCase())
                 }
 
                 get("/challenges") {
-                    call.respond(emptyList<Any>())
+                    call.respond(listAllChallengesUseCase())
                 }
 
                 get("/users") {

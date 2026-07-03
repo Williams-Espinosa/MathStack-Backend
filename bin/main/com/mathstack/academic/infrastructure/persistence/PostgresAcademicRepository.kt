@@ -84,6 +84,10 @@ class PostgresAcademicRepository : AcademicRepository {
 
     override fun findExerciseById(id: UUID): Exercise? = transaction { findExerciseByIdInTransaction(id) }
 
+    override fun listAllExercises(): List<Exercise> = transaction {
+        ExerciseTable.selectAll().map { it.toExercise() }
+    }
+
     override fun listExercisesByLesson(lessonId: UUID): List<Exercise> = transaction {
         ExerciseTable.selectAll().where { ExerciseTable.lessonId eq lessonId }.map { it.toExercise() }
     }

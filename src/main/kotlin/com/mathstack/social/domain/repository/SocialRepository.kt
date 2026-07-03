@@ -13,6 +13,7 @@ interface SocialRepository {
 
     fun createChallenge(challenge: Challenge): Challenge
     fun getChallenge(id: UUID): Challenge?
+    fun listAllChallenges(): List<Challenge>
     fun updateChallenge(challenge: Challenge): Challenge
 
     fun addChallengeParticipant(participant: ChallengeParticipant): ChallengeParticipant

@@ -59,3 +59,33 @@ data class GenerateAvatarRequest(
 data class GenerateAvatarResponse(
     val avatarUrl: String
 )
+
+@Serializable
+data class LearningMaterialResponse(
+    val id: String,
+    val title: String,
+    val description: String? = null,
+    val subjectId: Int,
+    val subject: String,
+    val lessonTypeId: Int,
+    val lessonType: String,
+    val difficulty: String,
+    val difficultyLevel: Int,
+    val type: String, // 'lesson' or 'exercise'
+    val contentUrl: String? = null,
+    val content: String? = null,
+    val exerciseCount: Int = 0
+)
+
+@Serializable
+data class ChallengeResponse(
+    val id: String,
+    val creatorId: String,
+    val statusId: Int = 0,
+    val status: String,
+    val createdAt: String,
+    val title: String,
+    val description: String,
+    val participants: Int = 0,
+    val isActive: Boolean = true
+)
