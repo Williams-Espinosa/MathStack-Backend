@@ -5,7 +5,37 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DashboardStatsResponse(
     val totalUsers: Int,
-    val activeChallenges: Int
+    val activeUsers: Int,
+    val totalLessons: Int,
+    val completedLessons: Int,
+    val totalChallenges: Int,
+    val activeChallenges: Int,
+    val difficultyStats: List<DifficultyStatsResponse>,
+    val userGrowth: List<UserGrowthResponse>,
+    val activityBySubject: List<ActivityBySubjectResponse>
+)
+
+@Serializable
+data class DifficultyStatsResponse(
+    val subjectId: Int,
+    val subjectName: String,
+    val totalAttempts: Int,
+    val failureRate: Double,
+    val averageDeficiencyScore: Double,
+    val averageScore: Double = 0.0,
+    val usersStruggling: Int = 0
+)
+
+@Serializable
+data class UserGrowthResponse(
+    val date: String,
+    val count: Int
+)
+
+@Serializable
+data class ActivityBySubjectResponse(
+    val subject: String,
+    val count: Int
 )
 
 @Serializable

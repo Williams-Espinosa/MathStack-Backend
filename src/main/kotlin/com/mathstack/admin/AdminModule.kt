@@ -12,4 +12,5 @@ val adminModule = module {
     factory { com.mathstack.admin.application.GetUserProfileUseCase(get()) }
     factory { com.mathstack.admin.application.ListAllDiagnosticsUseCase(get()) }
     factory { com.mathstack.admin.application.ListAllPracticeSessionsUseCase(get()) }
+    factory { com.mathstack.admin.application.GetDashboardStatsUseCase(get()) }
 }
