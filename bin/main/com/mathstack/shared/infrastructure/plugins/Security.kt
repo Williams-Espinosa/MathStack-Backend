@@ -27,6 +27,13 @@ fun Application.configureSecurity() {
                 val userId = credential.payload.getClaim("user_id").asString()
                     ?: credential.payload.subject
 
+                if (!hasAudience) {
+                    println("JWT Validation failed: Audience mismatch. Expected ${jwtConfig.audience}, got ${credential.payload.audience}")
+                }
+                if (userId.isNullOrBlank()) {
+                    println("JWT Validation failed: Missing user_id or subject")
+                }
+
                 if (hasAudience && !userId.isNullOrBlank()) {
                     JWTPrincipal(credential.payload)
                 } else {
