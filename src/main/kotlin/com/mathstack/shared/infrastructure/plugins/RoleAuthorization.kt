@@ -18,7 +18,7 @@ class AuthorizedRouteSelector(private val roles: List<String>) : RouteSelector()
 
 fun Route.authorize(vararg roles: String, build: Route.() -> Unit): Route {
     val authorizedRoute = createChild(AuthorizedRouteSelector(roles.toList()))
-    authorizedRoute.intercept(ApplicationCallPipeline.Plugins) {
+    authorizedRoute.intercept(ApplicationCallPipeline.Call) {
         val principal = call.principal<JWTPrincipal>() ?: throw UnauthorizedException("Token missing or invalid")
         val userRole = principal.payload.getClaim("access_level")?.asString() ?: "USER"
         if (!roles.contains(userRole)) {
