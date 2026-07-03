@@ -55,6 +55,15 @@ class PostgresUserRepository : UserRepository {
                 ?.toUser()
         }
 
+    override fun findUserByUsername(username: String): User? =
+        transaction {
+            UserTable
+                .selectAll()
+                .where { UserTable.username eq username }
+                .singleOrNull()
+                ?.toUser()
+        }
+
     override fun findAll(): List<User> =
         transaction {
             UserTable.selectAll().map { it.toUser() }

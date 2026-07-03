@@ -29,3 +29,27 @@ object ChallengeParticipantsTable : Table("challenge_participants") {
     
     override val primaryKey = PrimaryKey(challengeId, userId)
 }
+
+object GroupsTable : Table("groups") {
+    val id = uuid("id")
+    val name = varchar("name", 100)
+    val description = text("description").nullable()
+    val subject = varchar("subject", 50)
+    val maxMembers = integer("max_members")
+    val creatorId = uuid("creator_id")
+    val createdAt = datetime("created_at")
+    val activeChallenges = integer("active_challenges").default(0)
+    val totalXp = integer("total_xp").default(0)
+    val color = varchar("color", 50).default("from-blue-500 to-blue-600")
+    
+    override val primaryKey = PrimaryKey(id)
+}
+
+object GroupMembersTable : Table("group_members") {
+    val groupId = uuid("group_id")
+    val userId = uuid("user_id")
+    val role = varchar("role", 20)
+    val joinedAt = datetime("joined_at")
+    
+    override val primaryKey = PrimaryKey(groupId, userId)
+}

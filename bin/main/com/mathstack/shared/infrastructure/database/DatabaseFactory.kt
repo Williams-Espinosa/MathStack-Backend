@@ -2,6 +2,11 @@ package com.mathstack.shared.infrastructure.database
 
 import com.mathstack.academic.infrastructure.persistence.ExerciseTable
 import com.mathstack.academic.infrastructure.persistence.LessonTable
+import com.mathstack.social.infrastructure.persistence.FriendsTable
+import com.mathstack.social.infrastructure.persistence.ChallengesTable
+import com.mathstack.social.infrastructure.persistence.ChallengeParticipantsTable
+import com.mathstack.social.infrastructure.persistence.GroupsTable
+import com.mathstack.social.infrastructure.persistence.GroupMembersTable
 import com.mathstack.academic.infrastructure.persistence.LessonTypeTable
 import com.mathstack.academic.infrastructure.persistence.SubjectTable
 import com.mathstack.practice.infrastructure.persistence.DiagnosticResultsTable
@@ -37,7 +42,12 @@ object DatabaseFactory {
                 DiagnosticResultsTable,
                 LearningPathsTable,
                 PracticeSessionsTable,
-                ExerciseAttemptsTable
+                ExerciseAttemptsTable,
+                FriendsTable,
+                ChallengesTable,
+                ChallengeParticipantsTable,
+                GroupsTable,
+                GroupMembersTable
             )
         }
     }

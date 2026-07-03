@@ -16,6 +16,7 @@ import com.mathstack.users.infrastructure.rest.userRouting
 import io.ktor.server.application.Application
 import io.ktor.server.routing.routing
 import com.mathstack.social.infrastructure.rest.socialRouting
+import com.mathstack.social.infrastructure.rest.groupsRouting
 import com.mathstack.notifications.infrastructure.rest.notificationRouting
 
 fun Application.module() {
@@ -34,6 +35,7 @@ fun Application.module() {
         storeRouting()
         practiceRouting()
         socialRouting()
+        groupsRouting()
         notificationRouting()
         adminRouting()
     }
