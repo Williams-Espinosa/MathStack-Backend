@@ -36,6 +36,7 @@ fun Route.adminRouting() {
     val listAllLessonsUseCase by inject<com.mathstack.admin.application.ListAllLessonsUseCase>()
     val listAllExercisesUseCase by inject<com.mathstack.admin.application.ListAllExercisesUseCase>()
     val listAllChallengesUseCase by inject<com.mathstack.admin.application.ListAllChallengesUseCase>()
+    val createAdminChallengeUseCase by inject<com.mathstack.admin.application.CreateAdminChallengeUseCase>()
 
     authenticate("auth-jwt") {
         authorize("ADMIN") {
@@ -54,6 +55,40 @@ fun Route.adminRouting() {
 
                 get("/challenges") {
                     call.respond(listAllChallengesUseCase())
+                }
+                
+                post("/challenges") {
+                    val request = call.receive<com.mathstack.admin.infrastructure.rest.dto.CreateAdminChallengeRequest>()
+                    
+                    val command = com.mathstack.admin.application.CreateAdminChallengeCommand(
+                        title = request.title,
+                        description = request.description,
+                        subjectId = request.subjectId,
+                        difficulty = request.difficulty,
+                        startDate = request.startDate?.let { java.time.LocalDateTime.parse(it) },
+                        endDate = request.endDate?.let { java.time.LocalDateTime.parse(it) },
+                        rewardCoins = request.rewardCoins,
+                        rewardXp = request.rewardXp,
+                        targetScore = request.targetScore
+                    )
+                    
+                    val challenge = createAdminChallengeUseCase(command)
+                    
+                    call.respond(HttpStatusCode.Created, com.mathstack.admin.infrastructure.rest.dto.ChallengeResponse(
+                        id = challenge.id.toString(),
+                        creatorId = "admin",
+                        status = challenge.status,
+                        createdAt = challenge.createdAt.toString(),
+                        title = challenge.title,
+                        description = challenge.description,
+                        subjectId = challenge.subjectId,
+                        difficulty = challenge.difficulty,
+                        startDate = challenge.startDate?.toString(),
+                        endDate = challenge.endDate?.toString(),
+                        rewardCoins = challenge.rewardCoins,
+                        rewardXP = challenge.rewardXp,
+                        targetScore = challenge.targetScore
+                    ))
                 }
 
                 get("/users") {

@@ -14,6 +14,8 @@ val adminModule = module {
     factory { com.mathstack.admin.application.ListAllPracticeSessionsUseCase(get()) }
     factory { com.mathstack.admin.application.GetDashboardStatsUseCase(get(), get(), get(), get()) }
     factory { com.mathstack.admin.application.ListAllLessonsUseCase(get()) }
+    single<com.mathstack.admin.domain.repository.AdminChallengeRepository> { com.mathstack.admin.infrastructure.persistence.PostgresAdminChallengeRepository() }
     factory { com.mathstack.admin.application.ListAllExercisesUseCase(get()) }
-    factory { com.mathstack.admin.application.ListAllChallengesUseCase(get(), get()) }
+    factory { com.mathstack.admin.application.ListAllChallengesUseCase(get()) }
+    factory { com.mathstack.admin.application.CreateAdminChallengeUseCase(get()) }
 }

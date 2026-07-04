@@ -86,6 +86,27 @@ data class ChallengeResponse(
     val createdAt: String,
     val title: String,
     val description: String,
+    val subjectId: Int? = null,
+    val subject: String? = null,
+    val difficulty: String? = null,
+    val startDate: String? = null,
+    val endDate: String? = null,
+    val rewardCoins: Int? = null,
+    val rewardXP: Int? = null,
+    val targetScore: Int? = null,
     val participants: Int = 0,
     val isActive: Boolean = true
+)
+
+@Serializable
+data class CreateAdminChallengeRequest(
+    val title: String,
+    val description: String,
+    val subjectId: Int?,
+    val difficulty: String,
+    val startDate: String?,
+    val endDate: String?,
+    val rewardCoins: Int,
+    val rewardXp: Int,
+    val targetScore: Int
 )

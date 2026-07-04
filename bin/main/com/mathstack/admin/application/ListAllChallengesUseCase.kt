@@ -1,27 +1,28 @@
 package com.mathstack.admin.application
 
-import com.mathstack.social.domain.repository.SocialRepository
-import com.mathstack.academic.domain.repository.AcademicRepository
+import com.mathstack.admin.domain.repository.AdminChallengeRepository
 import com.mathstack.admin.infrastructure.rest.dto.ChallengeResponse
 
 class ListAllChallengesUseCase(
-    private val socialRepository: SocialRepository,
-    private val academicRepository: AcademicRepository
+    private val adminChallengeRepository: AdminChallengeRepository
 ) {
     operator fun invoke(): List<ChallengeResponse> {
-        return socialRepository.listAllChallenges().mapNotNull { challenge ->
-            val exercise = academicRepository.findExerciseById(challenge.exerciseId)
-            val lesson = exercise?.let { academicRepository.findLessonById(it.lessonId) }
-            val participants = socialRepository.getChallengeParticipants(challenge.id)
-
+        return adminChallengeRepository.listAll().map { challenge ->
             ChallengeResponse(
                 id = challenge.id.toString(),
-                creatorId = challenge.creatorId.toString(),
+                creatorId = "admin",
                 status = challenge.status,
-                createdAt = "2024-01-01T00:00:00Z", 
-                title = lesson?.title?.let { "Reto: $it" } ?: "Reto de Ejercicio",
-                description = exercise?.conceptTested ?: "Demuestra tus habilidades",
-                participants = participants.size,
+                createdAt = challenge.createdAt.toString(),
+                title = challenge.title,
+                description = challenge.description,
+                subjectId = challenge.subjectId,
+                difficulty = challenge.difficulty,
+                startDate = challenge.startDate?.toString(),
+                endDate = challenge.endDate?.toString(),
+                rewardCoins = challenge.rewardCoins,
+                rewardXP = challenge.rewardXp,
+                targetScore = challenge.targetScore,
+                participants = 0, // Placeholder
                 isActive = challenge.status == "ACTIVE"
             )
         }

@@ -13,6 +13,7 @@ import com.mathstack.practice.infrastructure.persistence.DiagnosticResultsTable
 import com.mathstack.practice.infrastructure.persistence.ExerciseAttemptsTable
 import com.mathstack.practice.infrastructure.persistence.LearningPathsTable
 import com.mathstack.practice.infrastructure.persistence.PracticeSessionsTable
+import com.mathstack.admin.infrastructure.persistence.AdminChallengesTable
 import com.mathstack.store.infrastructure.persistence.ItemTypeTable
 import com.mathstack.store.infrastructure.persistence.StoreItemTable
 import com.mathstack.store.infrastructure.persistence.UserInventoryTable
@@ -46,6 +47,7 @@ object DatabaseFactory {
                 FriendsTable,
                 ChallengesTable,
                 ChallengeParticipantsTable,
+                AdminChallengesTable,
                 GroupsTable,
                 GroupMembersTable
             )
