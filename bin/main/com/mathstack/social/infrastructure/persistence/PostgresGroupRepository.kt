@@ -52,7 +52,7 @@ class PostgresGroupRepository : GroupRepository {
     }
 
     override fun getGroupsByUserId(userId: UUID): List<Group> = transaction {
-        (GroupsTable innerJoin GroupMembersTable)
+        GroupsTable.join(GroupMembersTable, JoinType.INNER, additionalConstraint = { GroupsTable.id eq GroupMembersTable.groupId })
             .selectAll().where { GroupMembersTable.userId eq userId }
             .map { it.toGroup() }
     }
