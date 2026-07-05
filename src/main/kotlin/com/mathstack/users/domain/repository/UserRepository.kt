@@ -12,6 +12,7 @@ interface UserRepository {
     fun findUserByEmail(email: String): User?
     fun findUserByUsername(username: String): User?
     fun findAll(): List<User>
+    fun findAllProfiles(): List<UserProfile>
     fun existsById(id: UUID): Boolean
     fun updateUser(user: User): User?
     fun deleteUser(id: UUID): Boolean

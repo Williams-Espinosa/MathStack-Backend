@@ -27,3 +27,10 @@ fun ResultRow.toUserGamificationStats(): UserGamificationStats =
         minutesPracticed = this[UserGamificationStatsTable.minutesPracticed],
         lastPracticeDate = this[UserGamificationStatsTable.lastPracticeDate],
     )
+
+fun ResultRow.toUserGamificationStatsOrNull(): UserGamificationStats? {
+    if (this.getOrNull(UserGamificationStatsTable.userId) == null) {
+        return null
+    }
+    return this.toUserGamificationStats()
+}

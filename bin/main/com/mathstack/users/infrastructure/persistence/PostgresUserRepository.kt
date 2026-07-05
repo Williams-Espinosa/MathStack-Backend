@@ -70,6 +70,18 @@ class PostgresUserRepository : UserRepository {
             UserTable.selectAll().map { it.toUser() }
         }
 
+    override fun findAllProfiles(): List<UserProfile> =
+        transaction {
+            (UserTable leftJoin UserGamificationStatsTable)
+                .selectAll()
+                .map { row ->
+                    val user = row.toUser()
+                    val stats = row.toUserGamificationStatsOrNull() 
+                        ?: UserGamificationStats(userId = user.id)
+                    UserProfile(user, stats)
+                }
+        }
+
     override fun existsById(id: UUID): Boolean =
         transaction {
             UserTable
