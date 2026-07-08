@@ -9,16 +9,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 
 data class UpdateAdminChallengeCommand(
-    val title: String?,
-    val description: String?,
-    val subjectId: Int?,
-    val difficulty: String?,
-    val startDate: String?,
-    val endDate: String?,
-    val rewardCoins: Int?,
-    val rewardXp: Int?,
-    val targetScore: Int?,
-    val isActive: Boolean?,
+    val title: String? = null,
+    val description: String? = null,
+    val subjectId: Int? = null,
+    val difficulty: String? = null,
+    val startDate: String? = null,
+    val endDate: String? = null,
+    val rewardCoins: Int? = null,
+    val rewardXp: Int? = null,
+    val targetScore: Int? = null,
+    val isActive: Boolean? = null,
     val createdBy: String? = null
 )
 
