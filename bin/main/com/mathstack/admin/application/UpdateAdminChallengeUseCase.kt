@@ -18,7 +18,8 @@ data class UpdateAdminChallengeCommand(
     val rewardCoins: Int?,
     val rewardXp: Int?,
     val targetScore: Int?,
-    val isActive: Boolean?
+    val isActive: Boolean?,
+    val createdBy: String? = null
 )
 
 class UpdateAdminChallengeUseCase(

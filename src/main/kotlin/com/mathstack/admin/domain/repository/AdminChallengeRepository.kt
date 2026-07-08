@@ -8,4 +8,5 @@ interface AdminChallengeRepository {
     fun listAll(): List<AdminChallenge>
     fun findById(id: UUID): AdminChallenge?
     fun update(challenge: AdminChallenge): AdminChallenge
+    fun delete(id: UUID)
 }

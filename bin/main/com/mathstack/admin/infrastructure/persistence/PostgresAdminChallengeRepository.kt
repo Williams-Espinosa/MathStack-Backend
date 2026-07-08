@@ -3,6 +3,8 @@ package com.mathstack.admin.infrastructure.persistence
 import com.mathstack.admin.domain.model.AdminChallenge
 import com.mathstack.admin.domain.repository.AdminChallengeRepository
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
@@ -50,6 +52,12 @@ class PostgresAdminChallengeRepository : AdminChallengeRepository {
             it[status] = challenge.status
         }
         challenge
+    }
+
+    override fun delete(id: UUID) {
+        transaction {
+            AdminChallengesTable.deleteWhere { AdminChallengesTable.id eq id }
+        }
     }
 
     private fun ResultRow.toAdminChallenge() = AdminChallenge(

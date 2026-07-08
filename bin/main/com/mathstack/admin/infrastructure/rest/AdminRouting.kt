@@ -19,6 +19,7 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.patch
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import java.util.UUID
@@ -39,6 +40,7 @@ fun Route.adminRouting() {
     val listAllChallengesUseCase by inject<com.mathstack.admin.application.ListAllChallengesUseCase>()
     val createAdminChallengeUseCase by inject<com.mathstack.admin.application.CreateAdminChallengeUseCase>()
     val updateAdminChallengeUseCase by inject<com.mathstack.admin.application.UpdateAdminChallengeUseCase>()
+    val deleteAdminChallengeUseCase by inject<com.mathstack.admin.application.DeleteAdminChallengeUseCase>()
     val getAdminSettingsUseCase by inject<com.mathstack.admin.application.GetAdminSettingsUseCase>()
     val updateAdminSettingsUseCase by inject<com.mathstack.admin.application.UpdateAdminSettingsUseCase>()
     val emailService by inject<com.mathstack.shared.infrastructure.email.EmailService>()
@@ -134,6 +136,16 @@ fun Route.adminRouting() {
                             rewardXP = challenge.rewardXp,
                             targetScore = challenge.targetScore
                         ))
+                    } else {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
+                }
+
+                delete("/challenges/{id}") {
+                    val id = UUID.fromString(call.parameters["id"] ?: throw IllegalArgumentException("Missing id"))
+                    val success = deleteAdminChallengeUseCase(id)
+                    if (success) {
+                        call.respond(HttpStatusCode.NoContent)
                     } else {
                         call.respond(HttpStatusCode.NotFound)
                     }
