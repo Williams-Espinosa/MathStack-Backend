@@ -5,6 +5,7 @@ import com.mathstack.admin.domain.repository.AdminChallengeRepository
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.update
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
 
@@ -33,6 +34,22 @@ class PostgresAdminChallengeRepository : AdminChallengeRepository {
 
     override fun findById(id: UUID): AdminChallenge? = transaction {
         AdminChallengesTable.selectAll().where { AdminChallengesTable.id eq id }.singleOrNull()?.toAdminChallenge()
+    }
+
+    override fun update(challenge: AdminChallenge): AdminChallenge = transaction {
+        AdminChallengesTable.update({ AdminChallengesTable.id eq challenge.id }) {
+            it[title] = challenge.title
+            it[description] = challenge.description
+            it[subjectId] = challenge.subjectId
+            it[difficulty] = challenge.difficulty
+            it[startDate] = challenge.startDate
+            it[endDate] = challenge.endDate
+            it[rewardCoins] = challenge.rewardCoins
+            it[rewardXp] = challenge.rewardXp
+            it[targetScore] = challenge.targetScore
+            it[status] = challenge.status
+        }
+        challenge
     }
 
     private fun ResultRow.toAdminChallenge() = AdminChallenge(

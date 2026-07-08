@@ -18,6 +18,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.patch
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 import java.util.UUID
@@ -37,6 +38,7 @@ fun Route.adminRouting() {
     val listAllExercisesUseCase by inject<com.mathstack.admin.application.ListAllExercisesUseCase>()
     val listAllChallengesUseCase by inject<com.mathstack.admin.application.ListAllChallengesUseCase>()
     val createAdminChallengeUseCase by inject<com.mathstack.admin.application.CreateAdminChallengeUseCase>()
+    val updateAdminChallengeUseCase by inject<com.mathstack.admin.application.UpdateAdminChallengeUseCase>()
     val getAdminSettingsUseCase by inject<com.mathstack.admin.application.GetAdminSettingsUseCase>()
     val updateAdminSettingsUseCase by inject<com.mathstack.admin.application.UpdateAdminSettingsUseCase>()
     val emailService by inject<com.mathstack.shared.infrastructure.email.EmailService>()
@@ -110,6 +112,31 @@ fun Route.adminRouting() {
                         rewardXP = challenge.rewardXp,
                         targetScore = challenge.targetScore
                     ))
+                }
+
+                patch("/challenges/{id}") {
+                    val id = UUID.fromString(call.parameters["id"] ?: throw IllegalArgumentException("Missing id"))
+                    val request = call.receive<com.mathstack.admin.application.UpdateAdminChallengeCommand>()
+                    val challenge = updateAdminChallengeUseCase(id, request)
+                    if (challenge != null) {
+                        call.respond(HttpStatusCode.OK, com.mathstack.admin.infrastructure.rest.dto.ChallengeResponse(
+                            id = challenge.id.toString(),
+                            creatorId = "admin",
+                            status = challenge.status,
+                            createdAt = challenge.createdAt.toString(),
+                            title = challenge.title,
+                            description = challenge.description,
+                            subjectId = challenge.subjectId,
+                            difficulty = challenge.difficulty,
+                            startDate = challenge.startDate?.toString(),
+                            endDate = challenge.endDate?.toString(),
+                            rewardCoins = challenge.rewardCoins,
+                            rewardXP = challenge.rewardXp,
+                            targetScore = challenge.targetScore
+                        ))
+                    } else {
+                        call.respond(HttpStatusCode.NotFound)
+                    }
                 }
 
                 get("/users") {
