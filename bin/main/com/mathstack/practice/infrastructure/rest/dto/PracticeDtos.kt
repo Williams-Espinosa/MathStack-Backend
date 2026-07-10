@@ -70,6 +70,13 @@ data class SubmitDiagnosticRequest(
 )
 
 @Serializable
+data class DiagnosticSubjectResultResponse(
+    val subjectId: Int,
+    val subject: String,
+    val score: Double
+)
+
+@Serializable
 data class DiagnosticResponse(
     val id: String,
     val userId: String,

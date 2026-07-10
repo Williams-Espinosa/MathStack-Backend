@@ -99,10 +99,10 @@ fun Route.practiceRouting() {
                 
                 val responseList = results.map { res ->
                     val subjectName = subjects.find { it.id == res.subjectId }?.name ?: "Materia desconocida"
-                    mapOf(
-                        "subjectId" to res.subjectId,
-                        "subject" to subjectName,
-                        "score" to res.scorePercentage
+                    com.mathstack.practice.infrastructure.rest.dto.DiagnosticSubjectResultResponse(
+                        subjectId = res.subjectId,
+                        subject = subjectName,
+                        score = res.scorePercentage
                     )
                 }
                 
