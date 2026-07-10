@@ -35,7 +35,6 @@ data class UpdateNotificationPreferencesCommand(
     val preferredTimeInUtc: String,
     val isEnabled: Boolean
 )
-
 data class RegisterDeviceTokenCommand(
     val userId: UUID,
     val fcmToken: String
