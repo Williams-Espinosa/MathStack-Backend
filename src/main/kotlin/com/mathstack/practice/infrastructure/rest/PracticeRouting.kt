@@ -79,7 +79,8 @@ fun Route.practiceRouting() {
                             title = it.title,
                             difficultyLevel = it.difficultyLevel,
                             xp = it.xp,
-                            status = it.status
+                            status = it.status,
+                            subjectName = it.subjectName
                         ) 
                     }
                 )

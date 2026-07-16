@@ -99,7 +99,8 @@ data class LearningPathLessonResponse(
     val title: String,
     val difficultyLevel: Int,
     val xp: Int,
-    val status: String
+    val status: String,
+    val subjectName: String
 )
 
 @Serializable

@@ -9,7 +9,8 @@ data class LearningPathLessonDto(
     val title: String,
     val difficultyLevel: Int,
     val xp: Int,
-    val status: String
+    val status: String,
+    val subjectName: String
 )
 
 data class LearningPathResponseDto(
@@ -25,12 +26,22 @@ class GetLearningPathUseCase(
     operator fun invoke(userId: UUID): LearningPathResponseDto {
         val diagnostics = practiceRepository.findDiagnosticsByUserId(userId)
         
-        val prioritySubjectId = diagnostics.maxByOrNull { it.deficiencyScore }?.subjectId ?: 1
+        val maxDeficiencyBySubject = diagnostics.groupBy { it.subjectId }
+            .mapValues { entry -> entry.value.maxOf { it.deficiencyScore } }
+            
+        var targetSubjectIds = maxDeficiencyBySubject.filterValues { it >= 20 }.keys.toList()
         
-        val subject = academicRepository.findSubjectById(prioritySubjectId) 
-            ?: throw IllegalStateException("Subject not found for learning path")
+        if (targetSubjectIds.isEmpty()) {
+            val highest = maxDeficiencyBySubject.maxByOrNull { it.value }?.key ?: 1
+            targetSubjectIds = listOf(highest)
+        }
 
-        val allLessons = academicRepository.listLessonsBySubject(prioritySubjectId)
+        val allSubjects = academicRepository.listSubjects().associateBy { it.id }
+        
+        val allLessons = targetSubjectIds.flatMap { subjectId ->
+            val lessons = academicRepository.listLessonsBySubject(subjectId)
+            lessons.map { it to (allSubjects[subjectId]?.name ?: "Materia desconocida") }
+        }
         
         val userPaths = practiceRepository.findLearningPathsByUserId(userId)
         val userPathMap = userPaths.associateBy { it.lessonId }
@@ -38,7 +49,7 @@ class GetLearningPathUseCase(
         val lessonsResponse = mutableListOf<LearningPathLessonDto>()
         var previousLessonCompleted = true 
 
-        for (lesson in allLessons.sortedBy { it.difficultyLevel }) {
+        for ((lesson, subjectName) in allLessons.sortedBy { it.first.difficultyLevel }) {
             val userPath = userPathMap[lesson.id]
             
             val status = when {
@@ -53,7 +64,8 @@ class GetLearningPathUseCase(
                     title = lesson.title,
                     difficultyLevel = lesson.difficultyLevel,
                     xp = lesson.difficultyLevel * 25,
-                    status = status
+                    status = status,
+                    subjectName = subjectName
                 )
             )
             
@@ -61,8 +73,8 @@ class GetLearningPathUseCase(
         }
 
         return LearningPathResponseDto(
-            subjectId = subject.id,
-            subjectName = subject.name,
+            subjectId = 0,
+            subjectName = "Ruta de Reforzamiento",
             lessons = lessonsResponse
         )
     }

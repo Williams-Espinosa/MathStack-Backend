@@ -13,6 +13,6 @@ val practiceModule = module {
     single { LogPracticeSessionUseCase(get(), get()) }
     single { GetStudentDashboardMetricsUseCase(get()) }
     single { com.mathstack.practice.application.GenerateDiagnosticQuizUseCase(get()) }
-    single { com.mathstack.practice.application.SubmitDiagnosticAnswersUseCase(get(), get(), get()) }
+    single { com.mathstack.practice.application.SubmitDiagnosticAnswersUseCase(get(), get(), get(), get()) }
     single { com.mathstack.practice.application.GetLearningPathUseCase(get(), get()) }
 }

@@ -72,7 +72,8 @@ class LogPracticeSessionUseCase(
 class SubmitDiagnosticAnswersUseCase(
     private val academicRepository: com.mathstack.academic.domain.repository.AcademicRepository,
     private val userProficiencyRepository: com.mathstack.users.domain.repository.UserProficiencyRepository,
-    private val userRepository: com.mathstack.users.domain.repository.UserRepository
+    private val userRepository: com.mathstack.users.domain.repository.UserRepository,
+    private val practiceRepository: PracticeRepository
 ) {
     operator fun invoke(command: SubmitDiagnosticAnswersCommand): List<DiagnosticSubjectScore> {
         val subjectScores = mutableMapOf<Int, Pair<Int, Int>>() // subjectId -> (correct, total)
@@ -95,6 +96,16 @@ class SubmitDiagnosticAnswersUseCase(
                 else -> 1
             }
             userProficiencyRepository.saveProficiency(command.userId, subjectId, level)
+            
+            practiceRepository.createDiagnosticResult(
+                com.mathstack.practice.domain.model.DiagnosticResult(
+                    id = UUID.randomUUID(),
+                    userId = command.userId,
+                    subjectId = subjectId,
+                    deficiencyScore = (100.0 - percentage).toInt(),
+                    evaluatedAt = LocalDateTime.now()
+                )
+            )
         }
 
         val stats = userRepository.findStatsByUserId(command.userId)
