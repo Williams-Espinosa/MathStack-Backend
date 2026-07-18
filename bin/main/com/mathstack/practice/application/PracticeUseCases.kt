@@ -8,9 +8,13 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.UUID
 
-class RegisterExerciseAttemptUseCase(private val repository: PracticeRepository) {
+class RegisterExerciseAttemptUseCase(
+    private val repository: PracticeRepository,
+    private val academicRepository: com.mathstack.academic.domain.repository.AcademicRepository,
+    private val userRepository: com.mathstack.users.domain.repository.UserRepository
+) {
     operator fun invoke(command: RegisterExerciseAttemptCommand): ExerciseAttempt {
-        return repository.createExerciseAttempt(
+        val attempt = repository.createExerciseAttempt(
             ExerciseAttempt(
                 id = UUID.randomUUID(),
                 userId = command.userId,
@@ -19,6 +23,37 @@ class RegisterExerciseAttemptUseCase(private val repository: PracticeRepository)
                 attemptedAt = LocalDateTime.now(),
             )
         )
+        
+        if (command.isCorrect) {
+            val exercise = academicRepository.findExerciseById(command.exerciseId)
+            if (exercise != null) {
+                val lessonId = exercise.lessonId
+                
+                val stats = userRepository.findStatsByUserId(command.userId)
+                if (stats != null) {
+                    val lesson = academicRepository.findLessonById(lessonId)
+                    val xpReward = 50
+                    
+                    userRepository.updateStats(
+                        stats.copy(
+                            xpPoints = stats.xpPoints + xpReward,
+                            lessonsCompletedCount = stats.lessonsCompletedCount + 1
+                        )
+                    )
+                }
+
+                repository.upsertLearningPath(
+                    com.mathstack.practice.domain.model.LearningPath(
+                        userId = command.userId,
+                        lessonId = lessonId,
+                        status = "completed",
+                        completedAt = LocalDateTime.now()
+                    )
+                )
+            }
+        }
+        
+        return attempt
     }
 }
 

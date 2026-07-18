@@ -100,6 +100,25 @@ class PostgresPracticeRepository : PracticeRepository {
         LearningPathsTable.selectAll().where { (LearningPathsTable.userId eq path.userId) and (LearningPathsTable.lessonId eq path.lessonId) }.single().toLearningPath()
     }
 
+    override fun upsertLearningPath(path: com.mathstack.practice.domain.model.LearningPath): com.mathstack.practice.domain.model.LearningPath = transaction {
+        val existing = LearningPathsTable.selectAll().where { (LearningPathsTable.userId eq path.userId) and (LearningPathsTable.lessonId eq path.lessonId) }.singleOrNull()
+        if (existing != null) {
+            LearningPathsTable.update({ (LearningPathsTable.userId eq path.userId) and (LearningPathsTable.lessonId eq path.lessonId) }) {
+                it[status] = path.status
+                it[completedAt] = path.completedAt
+            }
+        } else {
+            LearningPathsTable.insert {
+                it[userId] = path.userId
+                it[lessonId] = path.lessonId
+                it[status] = path.status
+                it[completedAt] = path.completedAt
+            }
+        }
+        LearningPathsTable.selectAll().where { (LearningPathsTable.userId eq path.userId) and (LearningPathsTable.lessonId eq path.lessonId) }.single().toLearningPath()
+    }
+
+
     override fun findAllDiagnostics(): List<com.mathstack.practice.domain.model.DiagnosticResult> = transaction {
         DiagnosticResultsTable.selectAll().map { it.toDiagnosticResult() }
     }
