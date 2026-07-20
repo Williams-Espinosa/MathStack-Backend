@@ -12,7 +12,6 @@ import java.util.UUID
 
 class GetLearningPathUseCaseTest {
 
-    // Simple mock repository implementations for testing
     class MockPracticeRepository : PracticeRepository {
         val diagnostics = mutableListOf<DiagnosticResult>()
         override fun createExerciseAttempt(attempt: com.mathstack.practice.domain.model.ExerciseAttempt): com.mathstack.practice.domain.model.ExerciseAttempt = attempt
@@ -87,8 +86,6 @@ class GetLearningPathUseCaseTest {
         assertEquals(0, result.subjectId)
         assertEquals(4, result.lessons.size)
         
-        // Expected order by difficultyLevel:
-        // Suma (level 1), Variables (level 1), Fracciones (level 2), Ecuaciones (level 3)
         assertEquals(1, result.lessons[0].difficultyLevel)
         assertEquals(1, result.lessons[1].difficultyLevel)
         assertEquals(2, result.lessons[2].difficultyLevel)
