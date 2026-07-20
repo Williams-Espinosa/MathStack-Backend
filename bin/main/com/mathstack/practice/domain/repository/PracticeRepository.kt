@@ -22,4 +22,7 @@ interface PracticeRepository {
     fun findAllSessions(): List<PracticeSession>
     
     fun findLearningPathsByUserId(userId: UUID): List<com.mathstack.practice.domain.model.LearningPath>
+    
+    fun findAllExerciseAttempts(): List<ExerciseAttempt>
+    fun findAllLearningPaths(): List<com.mathstack.practice.domain.model.LearningPath>
 }

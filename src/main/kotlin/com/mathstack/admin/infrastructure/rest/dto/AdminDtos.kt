@@ -12,7 +12,31 @@ data class DashboardStatsResponse(
     val activeChallenges: Int,
     val difficultyStats: List<DifficultyStatsResponse>,
     val userGrowth: List<UserGrowthResponse>,
-    val activityBySubject: List<ActivityBySubjectResponse>
+    val activityBySubject: List<ActivityBySubjectResponse>,
+    val timeDistribution: List<TimeDistributionResponse>,
+    val weeklyEngagement: List<EngagementResponse>,
+    val userRetention: List<RetentionResponse>
+)
+
+@Serializable
+data class TimeDistributionResponse(
+    val hour: String,
+    val users: Int
+)
+
+@Serializable
+data class EngagementResponse(
+    val name: String,
+    val sessions: Int,
+    val completions: Int,
+    val streaks: Int
+)
+
+@Serializable
+data class RetentionResponse(
+    val week: String,
+    val retention: Double,
+    val active: Int
 )
 
 @Serializable

@@ -134,4 +134,12 @@ class PostgresPracticeRepository : PracticeRepository {
     override fun findLearningPathsByUserId(userId: UUID): List<com.mathstack.practice.domain.model.LearningPath> = transaction {
         LearningPathsTable.selectAll().where { LearningPathsTable.userId eq userId }.map { it.toLearningPath() }
     }
+
+    override fun findAllExerciseAttempts(): List<ExerciseAttempt> = transaction {
+        ExerciseAttemptsTable.selectAll().map { it.toExerciseAttempt() }
+    }
+
+    override fun findAllLearningPaths(): List<com.mathstack.practice.domain.model.LearningPath> = transaction {
+        LearningPathsTable.selectAll().map { it.toLearningPath() }
+    }
 }
