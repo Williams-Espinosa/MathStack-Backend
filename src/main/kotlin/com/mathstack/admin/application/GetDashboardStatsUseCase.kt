@@ -89,7 +89,7 @@ class GetDashboardStatsUseCase(
             EngagementResponse(dayName, daySessions, dayCompletions, (daySessions * 0.8).toInt())
         }
 
-        val retentionStats = List(2) { index ->
+        val retentionStats = List(6) { index ->
             val retentionRate = if (totalUsers > 0) {
                 maxOf(10.0, ((activeUsers.toDouble() / totalUsers) * 100) - (index * 7))
             } else 0.0
