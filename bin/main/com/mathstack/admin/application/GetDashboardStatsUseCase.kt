@@ -30,7 +30,9 @@ class GetDashboardStatsUseCase(
         val totalLessons = lessons.size
         
         val sessions = practiceRepository.findAllSessions().filter { it.userId in studentIds }
-        val completedLessons = sessions.sumOf { it.minutesSpent }
+        val completedLessons = userRepository.findAllProfiles()
+            .filter { it.user.id in studentIds }
+            .sumOf { it.gamificationStats.lessonsCompletedCount }
         
         val challenges = socialRepository.listAllChallenges()
         val totalChallenges = challenges.size
