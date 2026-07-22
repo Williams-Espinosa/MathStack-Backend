@@ -8,3 +8,9 @@ out/
 *.log
 
 .env
+
+test_parse.kt
+test.kt
+token_test.kt
+testDate.class
+testDate.java
