@@ -20,21 +20,23 @@ class GetDashboardStatsUseCase(
     private val practiceRepository: PracticeRepository,
 ) {
     operator fun invoke(): DashboardStatsResponse {
-        val allUsers = userRepository.findAll()
+        val allUsers = userRepository.findAll().filter { it.accessLevel == "STUDENT" || it.accessLevel.isBlank() }
+        val studentIds = allUsers.map { it.id }.toSet()
+        
         val totalUsers = allUsers.size
         val activeUsers = totalUsers 
         
         val lessons = academicRepository.listLessons()
         val totalLessons = lessons.size
         
-        val sessions = practiceRepository.findAllSessions()
+        val sessions = practiceRepository.findAllSessions().filter { it.userId in studentIds }
         val completedLessons = sessions.sumOf { it.minutesSpent }
         
         val challenges = socialRepository.listAllChallenges()
         val totalChallenges = challenges.size
         val activeChallenges = challenges.count { it.status == "ACTIVE" }
         
-        val diagnostics = practiceRepository.findAllDiagnostics()
+        val diagnostics = practiceRepository.findAllDiagnostics().filter { it.userId in studentIds }
         val subjects = academicRepository.listSubjects().associateBy { it.id }
         
         val difficultyStats = diagnostics.groupBy { it.subjectId }.map { (subjectId, results) ->
@@ -42,9 +44,9 @@ class GetDashboardStatsUseCase(
                 subjectId = subjectId,
                 subjectName = subjects[subjectId]?.name ?: "Unknown",
                 totalAttempts = results.size,
-                failureRate = results.count { it.deficiencyScore > 50 } / results.size.toDouble(),
-                averageDeficiencyScore = results.map { it.deficiencyScore }.average(),
-                averageScore = 100.0 - results.map { it.deficiencyScore }.average(),
+                failureRate = if (results.isNotEmpty()) results.count { it.deficiencyScore > 50 } / results.size.toDouble() else 0.0,
+                averageDeficiencyScore = if (results.isNotEmpty()) results.map { it.deficiencyScore }.average() else 0.0,
+                averageScore = if (results.isNotEmpty()) 100.0 - results.map { it.deficiencyScore }.average() else 0.0,
                 usersStruggling = results.count { it.deficiencyScore > 70 }
             )
         }
@@ -58,7 +60,7 @@ class GetDashboardStatsUseCase(
             ActivityBySubjectResponse(it.subjectName, it.totalAttempts)
         }
 
-        val attempts = practiceRepository.findAllExerciseAttempts()
+        val attempts = practiceRepository.findAllExerciseAttempts().filter { it.userId in studentIds }
         val buckets = arrayOf("00-06", "06-09", "09-12", "12-15", "15-18", "18-21", "21-24")
         val bucketCounts = IntArray(7) { 0 }
         
@@ -89,7 +91,6 @@ class GetDashboardStatsUseCase(
 
         val retentionStats = List(6) { index ->
             val retentionRate = if (totalUsers > 0) {
-                // Diminishing retention over weeks
                 maxOf(10.0, ((activeUsers.toDouble() / totalUsers) * 100) - (index * 7))
             } else 0.0
             RetentionResponse("Semana ${index + 1}", retentionRate, (activeUsers * (retentionRate / 100)).toInt())

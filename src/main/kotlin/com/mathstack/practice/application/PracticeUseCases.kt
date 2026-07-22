@@ -34,24 +34,10 @@ class RegisterExerciseAttemptUseCase(
                     val lesson = academicRepository.findLessonById(lessonId)
                     val xpReward = 50
                     
-                    val today = LocalDate.now()
-                    val lastDate = stats.lastPracticeDate
-                    
-                    var newStreak = stats.currentStreak
-                    if (lastDate == today.minusDays(1)) {
-                        newStreak += 1
-                    } else if (lastDate == null || lastDate.isBefore(today.minusDays(1))) {
-                        newStreak = 1
-                    }
-                    val newMaxStreak = maxOf(stats.maxStreak, newStreak)
-
                     userRepository.updateStats(
                         stats.copy(
                             xpPoints = stats.xpPoints + xpReward,
-                            lessonsCompletedCount = stats.lessonsCompletedCount + 1,
-                            currentStreak = newStreak,
-                            maxStreak = newMaxStreak,
-                            lastPracticeDate = today
+                            lessonsCompletedCount = stats.lessonsCompletedCount + 1
                         )
                     )
                 }
@@ -159,25 +145,7 @@ class SubmitDiagnosticAnswersUseCase(
 
         val stats = userRepository.findStatsByUserId(command.userId)
         if (stats != null) {
-            val today = LocalDate.now()
-            val lastDate = stats.lastPracticeDate
-            
-            var newStreak = stats.currentStreak
-            if (lastDate == today.minusDays(1)) {
-                newStreak += 1
-            } else if (lastDate == null || lastDate.isBefore(today.minusDays(1))) {
-                newStreak = 1
-            }
-            val newMaxStreak = maxOf(stats.maxStreak, newStreak)
-
-            userRepository.updateStats(
-                stats.copy(
-                    lastDiagnosticDate = LocalDateTime.now(),
-                    currentStreak = newStreak,
-                    maxStreak = newMaxStreak,
-                    lastPracticeDate = today
-                )
-            )
+            userRepository.updateStats(stats.copy(lastDiagnosticDate = LocalDateTime.now()))
         }
 
         return subjectScores.map { (subjectId, score) ->
